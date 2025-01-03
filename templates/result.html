@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Result</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <a href="/" class="btn btn-secondary mb-3">Back</a>
+        {% if message %}
+        <div class="alert alert-info">
+            <p>{{ message }}</p>
+        </div>
+        {% endif %}
+        {% if player %}
+        <h2 class="text-center">Player Information</h2>
+        <ul class="list-group">
+            <li class="list-group-item"><strong>Name:</strong> {{ player['Name:'] }}</li>
+            <li class="list-group-item"><strong>Shirt Name:</strong> {{ player['Shirt name:'] }}</li>
+            <li class="list-group-item"><strong>Position:</strong> {{ player['Position:'] }}</li>
+            <li class="list-group-item"><strong>Height:</strong> {{ player.get('Height:', 'N/A') }} cm</li>
+            <li class="list-group-item"><strong>Dominant Foot:</strong> {{ player['Foot:'] }}</li>
+        </ul>
+        <h3 class="mt-4">Versions:</h3>
+        <ul class="list-group">
+            {% for key, value in player.items() %}
+            {% if "PES" in key or "WE" in key  or "eFootball" in key %}
+            {% if value %}
+            <li class="list-group-item">{{ value }}</li>
+            {% endif %}
+            {% endif %}
+            {% endfor %}
+        </ul>
+        {% else %}
+        <h2 class="text-center">Player Not Found</h2>
+        <p>ID: {{ player_id }}</p>
+        {% if error %}
+        <p class="text-danger">{{ error }}</p>
+        {% endif %}
+        {% endif %}
+    </div>
+</body>
+</html>
