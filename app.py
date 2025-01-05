@@ -4,6 +4,8 @@ import json
 import os
 import re
 import gzip
+import threading
+
 
 app = Flask(__name__)
 
@@ -16,6 +18,19 @@ SHEET_URL = (
 # Nome do arquivo local para salvar o JSON compactado
 LOCAL_JSON_FILE = "google_sheet_data.json.gz"
 
+import http.server
+import socketserver
+
+# Configuração do servidor HTTP
+PORT = 8000
+
+Handler = http.server.SimpleHTTPRequestHandler
+
+def iniciar_servidor():
+    with socketserver.TCPServer(("", PORT), Handler) as httpd:
+        print(f"Serving at port {PORT}")
+        httpd.serve_forever()
+ 
 
 def save_gzip(data, file_path):
     """
@@ -117,4 +132,11 @@ def search():
 
 
 if __name__ == "__main__":
+    # Inicia o servidor HTTP em uma nova thread
+    servidor_thread = threading.Thread(target=iniciar_servidor)
+    servidor_thread.start()
+
     app.run(debug=True)
+
+    # Espera ambas as threads completarem (o que provavelmente nunca vai acontecer)
+    servidor_thread.join()
