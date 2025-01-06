@@ -5,6 +5,8 @@ import os
 import re
 import gzip
 import threading
+import http.server
+import socketserver
 
 
 app = Flask(__name__)
@@ -18,19 +20,6 @@ SHEET_URL = (
 # Nome do arquivo local para salvar o JSON compactado
 LOCAL_JSON_FILE = "google_sheet_data.json.gz"
 
-import http.server
-import socketserver
-
-# Configuração do servidor HTTP
-PORT = 8000
-
-Handler = http.server.SimpleHTTPRequestHandler
-
-def iniciar_servidor():
-    with socketserver.TCPServer(("", PORT), Handler) as httpd:
-        print(f"Serving at port {PORT}")
-        httpd.serve_forever()
- 
 
 def save_gzip(data, file_path):
     """
@@ -130,9 +119,13 @@ def search():
             print(f"Converted ID: {converted_id}")  # Log do ID convertido
             print(f"Players loaded: {len(players)} records")  # Log do número de registros
 
+            # Debug: Exibir os 5 primeiros registros para inspeção
+            for p in players[:5]:
+                print(f"Player data: {p}")
+
             # Certifique-se de que o ID no JSON é comparado corretamente
             player = next(
-                (p for p in players if str(p.get("Lic. ID:", "")).strip() == str(int(converted_id)).strip()), 
+                (p for p in players if int(float(p.get("Lic. ID:", 0))) == int(converted_id)),
                 None
             )
 
