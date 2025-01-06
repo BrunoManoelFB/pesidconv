@@ -101,6 +101,11 @@ def get_local_json():
 def index():
     return render_template("index.html")
 
+@app.route("/health")
+def health_check():
+    return jsonify({"status": "healthy"}), 200
+
+
 
 @app.route("/search", methods=["POST"])
 def search():
@@ -132,11 +137,5 @@ def search():
 
 
 if __name__ == "__main__":
-    # Inicia o servidor HTTP em uma nova thread
-    servidor_thread = threading.Thread(target=iniciar_servidor)
-    servidor_thread.start()
-
-    app.run(debug=True)
-
-    # Espera ambas as threads completarem (o que provavelmente nunca vai acontecer)
-    servidor_thread.join()
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
