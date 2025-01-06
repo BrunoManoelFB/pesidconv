@@ -105,8 +105,6 @@ def index():
 def health_check():
     return jsonify({"status": "healthy"}), 200
 
-
-
 @app.route("/search", methods=["POST"])
 def search():
     try:
@@ -129,11 +127,20 @@ def search():
         player = None
         if os.path.exists(LOCAL_JSON_FILE) and converted_id:
             players = load_gzip(LOCAL_JSON_FILE)
-            player = next((p for p in players if p.get("Lic. ID:") == converted_id), None)
+            print(f"Converted ID: {converted_id}")  # Log do ID convertido
+            print(f"Players loaded: {len(players)} records")  # Log do número de registros
 
+            # Certifique-se de que o ID no JSON é comparado corretamente
+            player = next(
+                (p for p in players if str(p.get("Lic. ID:", "")).strip() == str(int(converted_id)).strip()), 
+                None
+            )
+
+        print(f"Player found: {player}")  # Log do jogador encontrado
         return render_template("result.html", player=player, player_id=player_id, message=message)
     except ValueError:
         return render_template("result.html", error="Invalid player ID")
+
 
 
 if __name__ == "__main__":
